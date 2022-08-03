@@ -2,14 +2,12 @@ use crate::{Action, Effect, Error, Flow, Intent, Loadout, Unit};
 
 pub struct Board {
     pub units: Vec<Unit>,
-    pub log: Vec<Action>,
 }
 
 impl Board {
-    pub fn new(load: &[&Loadout]) -> Self {
+    pub fn new(load: &[Loadout]) -> Self {
         Self {
             units: load.iter().map(|l| Unit::new(l)).collect(),
-            log: Vec::new(),
         }
     }
 
@@ -22,14 +20,14 @@ impl Board {
             .collect())
     }
 
-    pub fn accept(&mut self, intent: &Intent) -> Result<Flow, Error> {
-        self.log.clear();
+    pub fn accept(&mut self, intent: Intent) -> Result<(Flow, Vec<Action>), Error> {
+        let mut log = Vec::new();
 
-        let action = self.get_action(*intent)?;
-        self.apply(intent.target, action.effect)?;
-        self.log.push(action);
+        let action = self.get_action(intent)?;
+        self.apply(action.intent.target, action.effect)?;
+        log.push(action);
 
-        self.end()
+        Ok((self.end()?, log))
     }
 }
 
@@ -48,7 +46,8 @@ impl Board {
     fn get_action(&self, intent: Intent) -> Result<Action, Error> {
         let source = self.unit(intent.source)?;
         let target = self.unit(intent.target)?;
-        Ok(Action::act(intent, source, target))
+        let action = source.act(intent, target);
+        Ok(action)
     }
 
     fn end(&self) -> Result<Flow, Error> {
