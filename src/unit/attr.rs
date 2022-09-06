@@ -3,7 +3,7 @@ use std::collections::HashMap;
 type Key = &'static str;
 type Value = i32;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Attr {
     map: HashMap<Key, Value>,
 }

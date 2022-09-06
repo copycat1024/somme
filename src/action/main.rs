@@ -8,8 +8,11 @@ pub struct Action {
 }
 
 impl Action {
-    pub(crate) fn new(intent: Intent, effect: Effect) -> Self {
-        Self { intent, effect }
+    pub(crate) fn new(intent: &Intent, effect: Effect) -> Self {
+        Self {
+            intent: intent.clone(),
+            effect,
+        }
     }
 }
 
@@ -28,7 +31,7 @@ impl Debug for Action {
         let kind = match action {
             ActionKind::Attack => "attack",
         };
-        write!(fmt, "Action {}({}->{}) {{", kind, source, target)?;
+        write!(fmt, "Action {}({:?}->{:?}) {{", kind, source, target)?;
         if *dmg > 0 {
             write!(fmt, " damage({})", dmg)?;
         }

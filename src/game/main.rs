@@ -1,47 +1,31 @@
-use super::Turn;
-use crate::{Action, Board, GameView, Intent, Loadout, Player, State};
+use crate::{Action, Board, GameView, Intent, Loadout, Player, Result, Rule};
 
 pub enum Flow {
     Continue,
     Dead(usize),
 }
 
-pub enum Error {
-    InvalidUnit,
-    InvalidIntent,
-}
-
 pub struct Game {
-    turn: Turn,
     board: Board,
+    rule: Rule,
 }
 
 impl Game {
-    pub fn new(cfg: &[Loadout]) -> Self {
-        Self {
-            turn: Turn::default(),
-            board: Board::new(cfg),
-        }
+    pub fn new(load: &[Loadout]) -> Result<Self> {
+        let rule = Rule::default();
+        let board = Board::new(load, &rule)?;
+        Ok(Self { board, rule })
     }
 
     pub fn play<P: Player<Move = Intent>>(
         &mut self,
         player: &mut P,
-    ) -> Result<(Flow, Vec<Action>), Error> {
-        let player_id = self.turn.player();
-        let mut moves = self.board.list_move(player_id)?;
-        let intent = player.choose(&moves);
-        let i = index_of_ref(&moves, intent).ok_or(Error::InvalidIntent)?;
-
-        self.turn.step(&());
-        self.board.accept(moves.remove(i))
+    ) -> Result<(Flow, Vec<Action>)> {
+        let Self { board, rule } = self;
+        rule.play_turn(board, |_| player)
     }
 
     pub fn view(&self) -> GameView<'_> {
-        GameView::new(&self.board.units)
+        GameView::new(&self.board.ecs)
     }
-}
-
-fn index_of_ref<T>(v: &Vec<T>, r: &T) -> Option<usize> {
-    v.iter().position(|i| std::ptr::eq(i, r))
 }

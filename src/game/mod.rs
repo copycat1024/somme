@@ -1,7 +1,7 @@
 mod main;
-mod turn;
+mod player;
 mod view;
 
-pub use main::{Error, Flow, Game};
-pub use turn::Turn;
+pub use main::{Flow, Game};
+pub use player::Player;
 pub use view::GameView;

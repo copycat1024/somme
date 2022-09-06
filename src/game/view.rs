@@ -1,15 +1,15 @@
-use crate::Unit;
+use hecs::World;
 
 pub struct GameView<'a> {
-    units: &'a [Unit],
+    ecs: &'a World,
 }
 
 impl<'a> GameView<'a> {
-    pub fn new(units: &'a [Unit]) -> Self {
-        Self { units }
+    pub fn new(ecs: &'a World) -> Self {
+        Self { ecs }
     }
 
-    pub fn units(&self) -> &'a [Unit] {
-        self.units
+    pub fn ecs(&self) -> &'a World {
+        self.ecs
     }
 }

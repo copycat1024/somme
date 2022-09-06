@@ -1,9 +1,9 @@
-use crate::{Effect, Unit};
+use crate::{Attr, Effect};
 
-pub fn effect(source: &Unit, target: &Unit) -> Effect {
-    let src_hp = source.attr("hp");
-    let tar_hp = target.attr("hp");
-    let src_att = source.attr("att");
+pub fn effect(source: &Attr, target: &Attr) -> Effect {
+    let src_hp = source.get("hp");
+    let tar_hp = target.get("hp");
+    let src_att = source.get("att");
 
     Effect {
         dmg: true_zero_scale(src_hp, tar_hp, src_att),

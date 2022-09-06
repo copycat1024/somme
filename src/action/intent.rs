@@ -1,19 +1,20 @@
+use hecs::Entity;
+
 use super::ActionKind;
 
+#[derive(Clone)]
 pub struct Intent {
-    pub source: usize,
-    pub target: usize,
+    pub source: Entity,
+    pub target: Entity,
     pub action: ActionKind,
-    pub(crate) _lock: (),
 }
 
 impl Intent {
-    pub(crate) fn new(source: usize, target: usize, action: ActionKind) -> Self {
+    pub(crate) fn new(source: Entity, target: Entity, action: ActionKind) -> Self {
         Self {
             source,
             target,
             action,
-            _lock: (),
         }
     }
 }
